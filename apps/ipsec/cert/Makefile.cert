@@ -1,0 +1,3 @@
+#ecc needed for ike
+
+ipsec_src += cert-parser.c cert-conf.c

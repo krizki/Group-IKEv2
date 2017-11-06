@@ -1,0 +1,262 @@
+/*
+ * g-ike-example-conf.h
+ *
+ *  Created on: Jun 13, 2016
+ *      Author: Argyro Lamproudi
+ */
+#ifndef __G_IKE__
+#define __G_IKE__
+
+/* CC2538 config */
+#ifndef ENERGEST_CONF_ON
+#define ENERGEST_CONF_ON            1 /**< Energest Module */
+#endif
+
+#ifndef LPM_CONF_ENABLE
+#define LPM_CONF_ENABLE       1 /**< Set to 0 to disable LPM entirely */
+#endif
+
+#ifndef LPM_CONF_MAX_PM
+#define LPM_CONF_MAX_PM       1 // was 1
+#endif
+
+#ifndef LPM_CONF_STATS
+#define LPM_CONF_STATS        1 /**< Set to 1 to enable LPM-related stats */
+#endif
+
+#ifdef UIP_CONF_BUFFER_SIZE
+#undef UIP_CONF_BUFFER_SIZE
+#endif
+#define UIP_CONF_BUFFER_SIZE	1280 // This option can be set in various platform specific header files as well
+
+/* Source Authentication */
+#define SOURCE_AUTH		1
+
+/* Variables that effect memory */
+
+
+#define IKE_SAD_ENTRIES NUM_OF_MEMBERS
+
+#define IKE_SESSION_NUM 5
+#define IKE_HALF_OPEN_NUM 5
+
+#define WATCHDOG_CONF_ENABLE 0 /**< Disable the watchdog timer */
+
+
+/* Enable IPSEC debugging */
+#define IPSEC_DEBUG 		0
+#define DEBUG 			0
+#define IKE_IPSEC_INFO 		0
+#define IPSEC_TIME_STATS 	0
+#define IPSEC_MEM_STATS 	0
+#define CONTIKI_WITH_IPV6       1
+#define NETSTACK_CONF_WITH_IPV6 1
+
+/*---------MULTICAST CONFIGURATION------*/
+#define CLIENT_SEND_MULTICAST 1 	//when CONF_GROUP 1 the client will send multicast packet.
+#undef UIP_CONF_ROUTER
+#define UIP_CONF_ROUTER       	 1
+
+#define CONF_GROUPTEST 0
+#if CONF_GROUPTEST
+/* Change this to switch engines. Engine codes in uip-mcast6-engines.h */
+#define UIP_MCAST6_CONF_ENGINE UIP_MCAST6_ENGINE_ROLL_TM
+
+/* For Imin: Use 16 over NullRDC, 64 over Contiki MAC */
+#define ROLL_TM_CONF_IMIN_1         64
+
+#undef UIP_CONF_IPV6_RPL
+#undef UIP_CONF_ND6_SEND_RA
+#undef UIP_CONF_ROUTER
+#define UIP_CONF_ND6_SEND_RA         0
+#define UIP_CONF_ROUTER              1
+#define UIP_MCAST6_ROUTE_CONF_ROUTES 1
+
+#undef UIP_CONF_TCP
+#define UIP_CONF_TCP 0
+
+/* Code/RAM footprint savings so that things will fit on our device */
+//#undef UIP_CONF_DS6_NBR_NBU
+//#undef UIP_CONF_DS6_ROUTE_NBU
+//#define UIP_CONF_DS6_NBR_NBU        10
+//#define UIP_CONF_DS6_ROUTE_NBU      10
+/*-------End of MULTICASST CONFIGURATION----*/
+#endif
+/* IPsec configuration ------------------*/
+/* Enabling ESP is equal to enabling to IPsec. Note that AH is not supported! */
+#define WITH_CONF_IPSEC_ESP             1
+
+
+/* The IKE subsystem is optional if the SAs are manually configured */
+#define WITH_CONF_IPSEC_IKE             1
+
+/*
+ * Manual SA configuration allows you as developer to create persistent SAs in the SAD.
+ * This is probably what you want to use if WITH_CONF_IPSEC_IKE is set 0, but please note
+ * that both features can be used simultaneously on a host as per the IPsec RFC.
+ *
+ * The manual SAs can be set in the function sad_conf()
+ */
+#define WITH_CONF_MANUAL_SA 	0
+/*
+ * Configure manually Group Security Associations*/
+#define WITH_CONF_MANUAL_GSA	0
+
+/* Enabling certificate authentication for the IKE AUTH payload */
+//#define WITH_CONF_IKE_CERT_AUTH 1
+#define WITH_CONF_IKE_CERT_AUTH 0
+
+
+/* Variables that need to be defined when using certificates */
+
+/* Subject Public Key Info Element of the CA in X.509 base64 encoding
+ * generated with:
+ *  openssl x509 -pubkey -noout -in caCert.pem  > caPubKey.pem
+ *  also used when acessing validity of cert payloads -> 91 elements
+ */
+#define CERT_KEY_AUTHORITY {0x30, 0x59, 0x30, 0x13, 0x06, 0x07, 0x2A, 0x86, 0x48,\
+                    0xCE, 0x3D, 0x02, 0x01, 0x06, 0x08, 0x2A, 0x86, 0x48, 0xCE,\
+                    0x3D, 0x03, 0x01, 0x07, 0x03, 0x42, 0x00, 0x04, 0x16, 0xCB,\
+                    0x72, 0xE9, 0x61, 0x8C, 0x6C, 0x02, 0x0E, 0xA8, 0xC1, 0x8F,\
+                    0x32, 0x33, 0xA3, 0x95, 0x3A, 0x3F, 0xB5, 0x58, 0x59, 0x71,\
+                    0x22, 0x2E, 0x1C, 0x44, 0x4B, 0x44, 0x16, 0x28, 0x92, 0x69,\
+                    0xBA, 0x86, 0xE8, 0xE2, 0x9C, 0x2E, 0x58, 0x03, 0xA3, 0xA4,\
+                    0x9F, 0x3A, 0x2B, 0xBC, 0xBA, 0x66, 0x69, 0xF6, 0xD9, 0x30,\
+                    0xE2, 0x55, 0x26, 0xBB, 0x77, 0x80, 0x70, 0x40, 0x52, 0x83,\
+                    0x67, 0xDE }
+
+#if WITH_CONF_IKE_CERT_AUTH || SOURCE_AUTH
+/* Client certificate pem encoded in hex */
+#define CLIENT_CERT {0x30, 0x82, 0x01, 0x42, 0x30, 0x81, 0xE9, 0xA0, 0x03, 0x02,\
+                    0x01, 0x02, 0x02, 0x08, 0x3F, 0x56, 0xA0, 0xAB, 0x71, 0x69,\
+                    0xB2, 0x5C, 0x30, 0x0A, 0x06, 0x08, 0x2A, 0x86, 0x48, 0xCE,\
+                    0x3D, 0x04, 0x03, 0x02, 0x30, 0x17, 0x31, 0x15, 0x30, 0x13,\
+                    0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x0C, 0x53, 0x49, 0x43,\
+                    0x53, 0x20, 0x54, 0x45, 0x53, 0x54, 0x20, 0x43, 0x41, 0x30,\
+                    0x1E, 0x17, 0x0D, 0x31, 0x35, 0x30, 0x35, 0x30, 0x36, 0x31,\
+                    0x37, 0x32, 0x32, 0x34, 0x37, 0x5A, 0x17, 0x0D, 0x31, 0x38,\
+                    0x30, 0x35, 0x30, 0x35, 0x31, 0x37, 0x32, 0x32, 0x34, 0x37,\
+                    0x5A, 0x30, 0x13, 0x31, 0x11, 0x30, 0x0F, 0x06, 0x03, 0x55,\
+                    0x04, 0x03, 0x13, 0x08, 0x4F, 0x70, 0x65, 0x6E, 0x4D, 0x6F,\
+                    0x74, 0x65, 0x30, 0x59, 0x30, 0x13, 0x06, 0x07, 0x2A, 0x86,\
+                    0x48, 0xCE, 0x3D, 0x02, 0x01, 0x06, 0x08, 0x2A, 0x86, 0x48,\
+                    0xCE, 0x3D, 0x03, 0x01, 0x07, 0x03, 0x42, 0x00, 0x04, 0xE5,\
+                    0xFC, 0xBC, 0xEC, 0xC1, 0xE6, 0x5F, 0xD6, 0x4E, 0x0D, 0xA3,\
+                    0x58, 0x6D, 0xAE, 0x08, 0xDB, 0x11, 0xB5, 0x3F, 0x85, 0x3F,\
+                    0xF9, 0xE1, 0xC3, 0x1D, 0xD3, 0xDD, 0xEE, 0xC3, 0x32, 0xE0,\
+                    0x53, 0x68, 0x18, 0x6D, 0x65, 0x35, 0x9C, 0x5F, 0xDE, 0xD2,\
+                    0xC7, 0xBF, 0x46, 0xBA, 0x65, 0x20, 0x36, 0xC4, 0x62, 0x7A,\
+                    0x97, 0x41, 0x92, 0x60, 0x9A, 0xB8, 0x25, 0x0D, 0xD3, 0x8A,\
+                    0x80, 0xCB, 0x70, 0xA3, 0x23, 0x30, 0x21, 0x30, 0x1F, 0x06,\
+                    0x03, 0x55, 0x1D, 0x23, 0x04, 0x18, 0x30, 0x16, 0x80, 0x14,\
+                    0x4C, 0x3C, 0x38, 0x59, 0xEA, 0x14, 0xF1, 0xD9, 0xFB, 0x9D,\
+                    0x1A, 0x2B, 0x25, 0xDD, 0x43, 0x60, 0x30, 0xE2, 0x54, 0x88,\
+                    0x30, 0x0A, 0x06, 0x08, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x04,\
+                    0x03, 0x02, 0x03, 0x48, 0x00, 0x30, 0x45, 0x02, 0x20, 0x2C,\
+                    0xFF, 0xFE, 0x05, 0xB6, 0x4E, 0x1F, 0x81, 0xD7, 0x0B, 0xE3,\
+                    0xC1, 0xD3, 0x12, 0x83, 0xD4, 0x5E, 0x1F, 0xAA, 0xF4, 0x11,\
+                    0x72, 0x6E, 0xE6, 0xC4, 0x04, 0x98, 0x28, 0x21, 0x90, 0xC1,\
+                    0xCD, 0x02, 0x21, 0x00, 0xB4, 0x3D, 0xCF, 0x4C, 0x65, 0x7F,\
+                    0x6E, 0x87, 0xDC, 0x3D, 0x58, 0xED, 0xDE, 0x7B, 0xFF, 0x6D,\
+                    0xA6, 0x90, 0x13, 0x9F, 0xD4, 0xA0, 0xD9, 0xC4, 0x69, 0xDA,\
+                    0x1D, 0x67, 0x96, 0xFA, 0xAE, 0x43}
+
+/* Client private key pem encoded in hex*/
+#define CLIENT_PRIVATE_CERT_KEY {0x30, 0x77, 0x02, 0x01, 0x01, 0x04, 0x20, 0x6F,\
+                    0x20, 0x58, 0x6B, 0xB1, 0x27, 0x30, 0x8D, 0xE2, 0xF2, 0xAC,\
+                    0xAB, 0xAC, 0x72, 0xFC, 0xEA, 0x60, 0xFB, 0xA1, 0x2A, 0x70,\
+                    0x25, 0xA8, 0x80, 0x0D, 0x15, 0xBC, 0x3D, 0xC0, 0x63, 0x8D,\
+                    0x9A, 0xA0, 0x0A, 0x06, 0x08, 0x2A, 0x86, 0x48, 0xCE, 0x3D,\
+                    0x03, 0x01, 0x07, 0xA1, 0x44, 0x03, 0x42, 0x00, 0x04, 0xE5,\
+                    0xFC, 0xBC, 0xEC, 0xC1, 0xE6, 0x5F, 0xD6, 0x4E, 0x0D, 0xA3,\
+                    0x58, 0x6D, 0xAE, 0x08, 0xDB, 0x11, 0xB5, 0x3F, 0x85, 0x3F,\
+                    0xF9, 0xE1, 0xC3, 0x1D, 0xD3, 0xDD, 0xEE, 0xC3, 0x32, 0xE0,\
+                    0x53, 0x68, 0x18, 0x6D, 0x65, 0x35, 0x9C, 0x5F, 0xDE, 0xD2,\
+                    0xC7, 0xBF, 0x46, 0xBA, 0x65, 0x20, 0x36, 0xC4, 0x62, 0x7A,\
+                    0x97, 0x41, 0x92, 0x60, 0x9A, 0xB8, 0x25, 0x0D, 0xD3, 0x8A,\
+                    0x80, 0xCB, 0x70}
+#endif
+
+/* Shared secret to use when not using certificate authentication */
+
+/* Shared secret defined below used in the IKE_AUTH payload */
+#define SHARED_IKE_SECRET "aa280649dc17aa821ac305b5eb09d445"
+
+/* ID up to 16 bytes*/
+#define IKE_ID "test@sics.se"
+
+/* IKE SA Configuration */
+/* Integrity transform to use for the IKE SA, supported transforms:
+   SA_INTEG_AES_XCBC_MAC_96, SA_INTEG_HMAC_SHA1_96, SA_INTEG_HMAC_SHA2_256_128
+   NOTE: don't define if IKE_ENCR = SA_ENCR_CCM_{8,12,16}*/
+//#define IKE_INTEG SA_INTEG_AES_XCBC_MAC_96
+
+/* Encryption transform to use for the IKE SA, supported transforms:
+   SA_ENCR_AES_CTR, SA_ENCR_AES_CCM_8, SA_ENCR_AES_CCM_12, SA_ENCR_AES_CCM_16 */
+//#define IKE_ENCR SA_ENCR_AES_CTR
+#define IKE_ENCR SA_ENCR_AES_CCM_8
+//#define IKE_ENCR SA_ENCR_AES_CCM_12
+//#define IKE_ENCR  SA_ENCR_AES_CCM_16
+
+
+//#define IKE_ENCR SA_ENCR_AES_CTR
+/* Psuedo-random function to use for the IKE SA, supported functions:
+   SA_PRF_HMAC_SHA1, SA_PRF_HMAC_SHA2_256*/
+#define IKE_PRF SA_PRF_HMAC_SHA2_256
+
+/* Diffie-Hellman groups supported for IKE:
+   SA_DH_192_RND_ECP_GROUP, SA_DH_256_RND_ECP_GROUP, SA_DH_256_BP_GROUP
+   NOTE: When certificate authentication is used this defaults to
+   SA_DH_256_RND_ECP_GROUP also this parameter must match CURVE_PARAMS from
+   the makefile, that is
+   SA_DH_192_RND_ECP_GROUP => CURVE_PARAMS = SECP192R1
+   SA_DH_256_RND_ECP_GROUP => CURVE_PARAMS = SECP256R1 (Only supported ECDSA algorithm)
+   SA_DH_256_BP_GROUP      => CURVE_PARAMS = BPOOLP256R1
+ */
+#define IKE_DH SA_DH_256_RND_ECP_GROUP
+
+/* ESP SA Configuration */
+/* Supported transforms, same as for IKE SA*/
+#define ESP_ENCR  SA_ENCR_AES_CCM_8
+//#define ESP_ENCR  SA_ENCR_AES_CCM_12
+//#define ESP_ENCR  SA_ENCR_AES_CCM_16
+//#define ESP_ENCR SA_ENCR_AES_CTR
+
+/* Supported transforms, same as for IKE SA
+  NOTE: don't define if ESP_ENCR=SA_ENCR_AES_CCM_{8,12,16}*/
+//#define ESP_INTEG SA_INTEG_AES_XCBC_MAC_96
+
+/**
+* Configuring an AES implementation
+*
+* The only current implementation is that provided by the MIRACL -library. In the future
+* this can be extended with an interface to the CC2420 radio module which is equipped with
+* an AES hardware implementation.
+*/
+#ifdef HW_AES
+#define CRYPTO_CONF_AES cc2538_aes
+#else
+#define CRYPTO_CONF_AES contiki_aes
+#endif
+// ECC
+//#define WORDS_32_BITS 1
+//#define HW_SHA
+//#define STATIC_ECC_KEY
+//#define CC2538_CHECK_STACK_USAGE
+/**
+	* TODO: Remove the IPSEC_CONF -identifiers below once asserted it's safe
+	*/
+/* Configuring a cipher block mode of operation (encryption/decryption) */
+//#define IPSEC_CONF_BLOCK aesctr
+/* Configuring a cipher block MAC mode of operation (authentication) */
+//#define IPSEC_CONF_MAC aesxcbc_mac
+
+// Change RDC driver
+#define NETSTACK_CONF_RDC nullrdc_driver
+
+// Change MAC driver
+//#define NETSTACK_CONF_MAC nullmac_driver
+
+#define CC2538_RF_CONF_CHANNEL 15
+#define QUEUEBUF_CONF_NUM 16
+#endif

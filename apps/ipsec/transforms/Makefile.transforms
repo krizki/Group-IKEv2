@@ -1,0 +1,29 @@
+ipsec_src += encr.c integ.c contiki-aes-mapping.c cc2538-aes-mapping.c 
+
+ifndef HMAC_SHA
+    ipsec_src += hmac-sha1.c hmac-sha256.c
+endif
+
+ifeq ($(HMAC_SHA),1)
+    ipsec_src += hmac-sha1.c
+endif
+
+ifeq ($(HMAC_SHA),2)
+    ipsec_src += hmac-sha256.c
+endif
+
+ifndef AES_CCM
+    ipsec_src += aes-ccm.c ipsec-ccm.c
+endif
+
+ifndef NO_AES_CBC
+    ipsec_src += aes-cbc.c 
+endif
+
+ifndef NO_AES_CTR
+    ipsec_src += aes-ctr.c
+endif
+
+ifndef NO_AES_XCBC
+    ipsec_src += aes-xcbc-mac.c 
+endif

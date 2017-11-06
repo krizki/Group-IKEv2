@@ -1,0 +1,50 @@
+all: gckserver client
+
+CONTIKI = ../../..
+MODULES += core/net/ipv6/multicast
+CONTIKI_WITH_IPV6 = 1
+CFLAGS += -DPROJECT_CONF_H=\"g-ike-example-conf.h\"
+
+CONTIKI_WITH_IPSEC=1
+ifeq ($(CONTIKI_WITH_IPSEC),1)
+CURVE_PARAMS = SECP256R1
+WITH_IPSEC=1
+WITH_IPSEC_SICSLOWPAN=1 
+APPS += ipsec
+else
+WITH_IPSEC=0
+CFLAGS+= -DWITH_IPSEC=0
+CFLAGS+= -DWITH_IPSEC_IKE=0
+endif
+
+ifeq ($(TARGET),minimal-net)
+UIP_CONF_IPV6_RPL=0
+CFLAGS += -DWITH_MINIMALNET=1
+CFLAGS += -DUIP_CONF_ND6_DEF_MAXDADNS=0
+endif
+
+ifeq ($(TARGET),cooja)
+CFLAGS += -DWITH_COOJA=1
+else
+CFLAGS += -DWITH_COOJA=0
+endif
+
+ifeq ($(TARGET),openmote)
+APPS += flash-erase
+CFLAGS += -DHW_ECC
+CFLAGS += -DHW_SHA
+CFLAGS += -DHW_CCM
+CFLAGS += -DHW_AES
+CFLAGS += -DWITH_OPENMOTE=1
+endif
+
+WITH_COMPOWER=1
+ifeq ($(WITH_COMPOWER),1)
+APPS+=powertrace
+CFLAGS+= -DCONTIKIMAC_CONF_COMPOWER=1 -DWITH_COMPOWER=1 -DQUEUEBUF_CONF_NUM=16
+else
+CFLAGS += -DWITH_COMPOWER=0
+endif
+
+include $(CONTIKI)/Makefile.include
+

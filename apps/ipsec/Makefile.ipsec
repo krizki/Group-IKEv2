@@ -1,0 +1,63 @@
+IKE = 0
+
+ifeq ($(WITH_IPSEC),1)
+    IKE = 1
+endif
+
+ifeq ($(IKE_WITH_RPL),1)
+    IKE = 1
+endif
+
+ifeq ($(IKE_WITH_IEEE),1)
+    IKE = 1
+endif
+
+ifeq ($(WITH_IPSEC_SICSLOWPAN),1)
+    CFLAGS += -DWITH_IPSEC_SICSLOWPAN=1
+endif
+
+ifeq ($(IKE),1)
+    ifeq ($(WITH_IPSEC),1)
+        CFLAGS += -DWITH_IPSEC=1
+        CFLAGS += -DWITH_IPSEC_IKE=1
+        CFLAGS += -DWITH_CONF_IPSEC_ESP=1
+        IKE_WITH_IEEE = 0
+        IKE_WITH_RPL = 0
+        ipsec_src += sad.c
+    endif
+    ipsec_src += common-ipsec.c sa.c
+
+    APPS += ecc
+    include $(CONTIKI)/apps/ecc/Makefile.ecc
+
+    APPS += ipsec/common
+    include $(CONTIKI)/apps/ipsec/common/Makefile.common
+
+    APPS += ipsec/transforms
+    include $(CONTIKI)/apps/ipsec/transforms/Makefile.transforms
+
+    APPS += ipsec/ike
+    include $(CONTIKI)/apps/ipsec/ike/Makefile.ike
+
+    APPS += ipsec/cert
+    include $(CONTIKI)/apps/ipsec/cert/Makefile.cert
+
+    ifeq ($(IKE_WITH_RPL),1)
+        CFLAGS += -DIKE_WITH_RPL=1
+        WITH_IPSEC = 0
+        IKE_WITH_IEEE = 0
+        CFLAGS += -DWITH_IPSEC=0 -DWITH_IPSEC_IKE=0 -DWITH_CONF_IPSEC_ESP=0
+        APPS += ipsec/rpl
+        include $(CONTIKI)/apps/ipsec/rpl/Makefile.rpl
+    endif
+
+    ifeq ($(IKE_WITH_IEEE),1)
+        CFLAGS += -DIKE_WITH_IEEE=1
+        IKE_WITH_RPL = 0
+        WITH_IPSEC = 0
+        CFLAGS += -DWITH_IPSEC=0 -DWITH_IPSEC_IKE=0 -DWITH_CONF_IPSEC_ESP=0
+        APPS += ipsec/ieee-802-15-4
+        include $(CONTIKI)/apps/ipsec/ieee-802-15-4/Makefile.ieee
+    endif
+
+endif

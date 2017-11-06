@@ -1,0 +1,35 @@
+CFLAGS += -DJACOBIAN_COORDINATES
+#CFLAGS += -DSLIDING_WINDOW
+
+ifeq ($(ECC_WORD_SIZE),16)
+CFLAGS += -DWORDS_16_BITS
+else
+CFLAGS += -DWORDS_32_BITS
+endif
+
+ifeq ($(CURVE_PARAMS),)
+  # Possible curves: SECP192R1, SECP256R1, 
+  # BPOOLP160R1, BPOOLP256R1
+  CURVE_PARAMS = SECP192R1
+endif
+
+# include curve files
+ifeq ($(CURVE_PARAMS),SECP256R1)
+CONTIKI_SOURCEFILES += secp256r1.c
+else ifeq ($(CURVE_PARAMS),BPOOLP160R1)
+CONTIKI_SOURCEFILES += brainpoolP160r1.c    
+else ifeq ($(CURVE_PARAMS),BPOOLP256R1)
+CONTIKI_SOURCEFILES += brainpoolP256r1.c
+else
+CONTIKI_SOURCEFILES += secp192r1.c
+endif
+
+
+DEFINES += $(CURVE_PARAMS)
+CFLAGS += ${addprefix -D, $(DEFINES)}
+
+#CURVE_SOURCEFILES = ${addsuffix .c, $(shell echo $(CURVE_PARAMS) | tr A-Z a-z)}
+
+#CONTIKI_SOURCEFILES += $(CURVE_SOURCEFILES)
+
+ecc_src = bigint.c sha224-256.c ecc.c ecc-sha1.c

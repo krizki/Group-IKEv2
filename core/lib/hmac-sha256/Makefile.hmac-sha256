@@ -1,0 +1,1 @@
+CONTIKI_SOURCEFILES += hmac-sha256.c

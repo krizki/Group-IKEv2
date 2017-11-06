@@ -1,0 +1,3 @@
+ipsec_src += ipsec-malloc.c \
+  sad-conf.c spd.c gsad-conf.c\
+  spd-conf.c ipsec-random.c filter.c

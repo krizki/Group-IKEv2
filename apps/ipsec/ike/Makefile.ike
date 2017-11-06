@@ -1,0 +1,9 @@
+ipsec_src += common-ike.c ike.c initiator.c established.c machine.c prf.c responder.c auth.c ecdh.c gcks-machine.c gike-established.c gike-functions.c member-machine.c
+
+#ecc needed for ike
+APPS += ecc
+include $(CONTIKI)/apps/ecc/Makefile.ecc
+
+#APPS += transforms
+#include $(CONTIKI)/apps/ipsec/transforms/Makefile.transforms
+
