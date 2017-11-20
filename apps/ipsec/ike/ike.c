@@ -266,39 +266,11 @@ PROCESS_THREAD(ike2_service, ev, data)
 	rekey_counter++;
 
 #if 1	//leave test
-// #if WITH_COMPOWER
-//powertrace_print("#P GSA_REKEY LEAVE <");
-//#endif
 	gsak_entry_t *temp = (gsak_entry_t *)data;
 	gike_rekeying_msg_leave(temp);
-// #if WITH_COMPOWER
-//      powertrace_print("#P GSA_REKEY LEAVE >");
-//#endif */
 #else
-/* #if WITH_COMPOWER
-      powertrace_print("#P GSA_REKEY <");
-#endif */
     	gike_rekeying_msg_init((gsak_entry_t *)data);
-/* #if WITH_COMPOWER
-	powertrace_print("#P GSA_REKEY >");
-#endif */
 #endif
-
-	/*} else if(ev == ike_negotiate_done1){
-#if WITH_COMPOWER
-//powertrace_sniff(POWERTRACE_ON);
-powertrace_print("#P GSA_REKEY LEAVEE <");
-#endif
-
-    	printf("====== Rekey Event2 ====== \n");
-
-	gsak_entry_t *temp = (gsak_entry_t *)data;
-	gike_rekeying_msg_init(temp);
-
-#if WITH_COMPOWER
-      powertrace_print("#P GSA_REKEY LEAVEE >");
-#endif
-*/
 
     } else{
       IPSEC_PRINTF(IPSEC_IKE "IKEv2 Service: Unknown event\n");

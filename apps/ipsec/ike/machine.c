@@ -90,8 +90,6 @@ rtimer_clock_t total_time = 0;
 #endif
 #endif
 
-process_event_t ike_negotiate_done1;
-
 #if WITH_COMPOWER
 #include "powertrace.h"
 #endif
