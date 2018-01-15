@@ -1045,13 +1045,13 @@ void parse_rekey_msg(uint8_t *payload_start, gsak_entry_t *gsak_entry){
 
           IKE_PRINTF("Next payload is %u, %u bytes remaining\n", payload_type, uip_datalen() - (ptr - msg_buf));
           switch(payload_type) {
-          case IKE_PAYLOAD_SK_BR_JOIN:
+          case IKE_PAYLOAD_SK_BR_NONLEAVE:
         	  printf("end = %u \n", end);
         	  if((end -= group_ike_rekey_statem_unpack_sk(gsak_entry, (ike_payload_generic_hdr_t *)genpayloadhdr, 0)) == 0) {
-        	         printf(IPSEC_IKE_ERROR "[Rekey message - Join] SK payload: Integrity check of peer's message failed\n");
+        	         printf(IPSEC_IKE_ERROR "[Rekey message - Periodic/Join] SK payload: Integrity check of peer's message failed\n");
         	         return;
         	       } else {
-        	         printf("[Rekey message - Join] SK payload: Integrity check successful\n");
+        	         printf("[Rekey message - Periodic/Join] SK payload: Integrity check successful\n");
         	       }
         	  break;
 	  case IKE_PAYLOAD_SK_BR_LEAVE1:
@@ -1361,7 +1361,7 @@ group_ike_rekey_statem_prepare_sk(payload_arg_t *payload_arg, gsak_entry_t *gsak
 		SET_GENPAYLOADHDR(sk_genpayloadhdr, payload_arg, IKE_PAYLOAD_SK_BR_LEAVE2);
 		break;
 	default:
-		SET_GENPAYLOADHDR(sk_genpayloadhdr, payload_arg, IKE_PAYLOAD_SK_BR_JOIN);
+		SET_GENPAYLOADHDR(sk_genpayloadhdr, payload_arg, IKE_PAYLOAD_SK_BR_NONLEAVE);
 		break;
   	}
 

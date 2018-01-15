@@ -85,7 +85,7 @@ typedef enum {
   IKE_PAYLOAD_GSAT,
   IKE_PAYLOAD_KD,		/* Key Download */
   IKE_PAYLOAD_SID,
-  IKE_PAYLOAD_SK_BR_JOIN,		/* REKEY message for join case and periodic rekeying */
+  IKE_PAYLOAD_SK_BR_NONLEAVE,		/* REKEY message for join case and periodic rekeying */
   IKE_PAYLOAD_SK_BR_LEAVE1,		/* REKEY message for leave case, first message, unicast */
   IKE_PAYLOAD_SK_BR_LEAVE2		/* REKEY message for leave case, second message, multicast */
 

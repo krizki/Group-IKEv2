@@ -53,7 +53,7 @@
  */
 //#define GIKE_INTEG SA_INTEG_AES_XCBC_MAC_96
 
-#define NUM_OF_MEMBERS 2
+#define NUM_OF_MEMBERS 5
 #define NUM_OF_CAN_MEMBERS 1
 #define NUM_OF_GROUPS 1
 #define MAX_KEYS 5

@@ -67,6 +67,8 @@
 #define DEBUG DEBUG_PRINT
 #include "net/ip/uip-debug.h"
 
+#define LEAVE_TEST 0
+
 ipsec_addr_t ike_arg_packet_tag; //from uip6.c
 process_event_t ike_negotiate_event;
 process_event_t rekey_event;
@@ -265,10 +267,10 @@ PROCESS_THREAD(ike2_service, ev, data)
     	printf("====== Rekey Event ====== \n");
 	rekey_counter++;
 
-#if 1	//leave test
+#if LEAVE_TEST	//periodically sends GSA_REKEY_LEAVE1 and GSA_REKEY_LEAVE2 messages
 	gsak_entry_t *temp = (gsak_entry_t *)data;
 	gike_rekeying_msg_leave(temp);
-#else
+#else	//periodically sends GSA_REKEY_PERIODIC message
     	gike_rekeying_msg_init((gsak_entry_t *)data);
 #endif
 
